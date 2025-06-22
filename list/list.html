@@ -99,7 +99,7 @@
 
     // ✅ 2. 제목 동적 반영
     document.getElementById("pageTitle").textContent = `채널명: ${youtuber}`;
-    document.getElementById("mainTitle").textContent = `${youtuber} 대시보드`;
+    document.getElementById("mainTitle").textContent = `채널명: ${youtuber}`;
 
     // ✅ 3. 기존 로직
     const monthSelect = document.getElementById("monthSelect");
@@ -157,10 +157,7 @@
     function renderDetailTables(rows) {
       detailTablesContainer.innerHTML = "";
 
-      // ✅ 우선순위 정렬용 리스트
       const productPriority = ["마스크", "손등장갑(오른손)", "손등장갑(양손)"];
-
-      // ✅ products 리스트를 우선순위대로 정렬
       const products = productPriority.filter(p =>
         rows.some(r => r.product === p)
       );
@@ -175,19 +172,43 @@
         title.className = "product-title";
 
         let price = "13,200원";
-        if (product === "손등장갑(오른손)") {
-          price = "11,000원";
-        } else if (product === "손등장갑(양손)") {
-          price = "19,800원";
-        }
+        if (product === "손등장갑(오른손)") price = "11,000원";
+        else if (product === "손등장갑(양손)") price = "19,800원";
 
-        // ✅ 마스크에만 "[판매 세부]" 붙이기
         const prefix = product === "마스크" ? "[판매 세부] " : "";
         title.innerText = `${prefix}${product} / 판매가: ${price} (VAT 포함)`;
-
         div.appendChild(title);
 
         const table = document.createElement("table");
+
+        // ✅ 본문 행
+        const tbody = document.createElement("tbody");
+        tbody.innerHTML = productRows.map(r => `
+          <tr>
+            <td class="numeric">${r.order_count.toLocaleString()}</td>
+            <td class="numeric">${r.refund_count.toLocaleString()}</td>
+            <td class="numeric">${r.sale_qty.toLocaleString()}</td>
+            <td class="numeric">${r.sale_amount.toLocaleString()}</td>
+          </tr>
+        `).join("");
+
+        // ✅ 소계 계산
+        const totalOrder = productRows.reduce((sum, r) => sum + r.order_count, 0);
+        const totalRefund = productRows.reduce((sum, r) => sum + r.refund_count, 0);
+        const totalQty = productRows.reduce((sum, r) => sum + r.sale_qty, 0);
+        const totalAmount = productRows.reduce((sum, r) => sum + r.sale_amount, 0);
+
+        // ✅ 소계 행 추가
+        const tfoot = document.createElement("tfoot");
+        tfoot.innerHTML = `
+          <tr>
+            <td class="numeric"><strong>${totalOrder.toLocaleString()}</strong></td>
+            <td class="numeric"><strong>${totalRefund.toLocaleString()}</strong></td>
+            <td class="numeric"><strong>${totalQty.toLocaleString()}</strong></td>
+            <td class="numeric"><strong>${totalAmount.toLocaleString()}</strong></td>
+          </tr>
+        `;
+
         table.innerHTML = `
           <thead>
             <tr>
@@ -197,23 +218,14 @@
               <th>판매합계</th>
             </tr>
           </thead>
-          <tbody>
-            ${productRows.map(r => `
-              <tr>
-                <td class="numeric">${r.order_count.toLocaleString()}</td>
-                <td class="numeric">${r.refund_count.toLocaleString()}</td>
-                <td class="numeric">${r.sale_qty.toLocaleString()}</td>
-                <td class="numeric">${r.sale_amount.toLocaleString()}</td>
-              </tr>
-            `).join("")}
-          </tbody>
         `;
-        div.appendChild(table);
+        table.appendChild(tbody);
+        table.appendChild(tfoot);
 
+        div.appendChild(table);
         detailTablesContainer.appendChild(div);
       });
     }
-
 
     if (months.length > 0) {
       monthSelect.value = months[0];
