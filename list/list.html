@@ -6,22 +6,52 @@
   <link rel="stylesheet" href="../css/style.css">
   <style>
     body {
+      font-family: sans-serif;
       margin: 20px;
-      font-family: Arial, sans-serif;
     }
 
-    .header {
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .header-left {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
-      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    label {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    select {
+      padding: 5px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg%20fill='%23666'%20height='24'%20viewBox='0%200%2024%2024'%20width='24'%20xmlns='http://www.w3.org/2000/svg'%3E%3Cpath%20d='M7%2010l5%205%205-5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px 16px;
+      min-width: 120px;
     }
 
     .dashboard-container {
       display: flex;
       gap: 20px;
       align-items: flex-start;
-      flex-wrap: wrap;
     }
 
     table {
@@ -53,8 +83,14 @@
       text-align: right;
     }
 
+    .detail-tables {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
     .detail-table {
-      margin-bottom: 20px;
       min-width: 300px;
       flex: 1 1 300px;
     }
@@ -64,29 +100,21 @@
       margin: 4px 0 5px;
     }
 
-    .detail-tables {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      align-items: flex-start;
-    }
-
     tr.total-row {
       background-color: #fff4e0;
       font-weight: bold;
-    }
-
-    tr.total-row td {
       color: #d14300;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1 id="mainTitle">대시보드</h1>
-    <label for="monthSelect">월 선택:
-      <select id="monthSelect"></select>
-    </label>
+  <div class="dashboard-header">
+    <div class="header-left">
+      <h1 id="mainTitle">대시보드</h1>
+      <label for="monthSelect">월 선택: 
+        <select id="monthSelect"></select>
+      </label>
+    </div>
   </div>
 
   <div class="dashboard-container">
@@ -94,7 +122,7 @@
       <table id="summaryTable">
         <thead>
           <tr>
-            <th colspan="4" style="background:#f8f8f8; border: 1px solid #aaa;">LEFLEX 할인판매 현황</th>
+            <th colspan="4" style="background:#f8f8f8;">LEFLEX 할인판매 현황</th>
             <th class="vat">VAT포함</th>
           </tr>
           <tr>
@@ -215,20 +243,8 @@
         div.appendChild(title);
 
         const table = document.createElement("table");
-        const thead = document.createElement("thead");
         const tbody = document.createElement("tbody");
-        const tfoot = document.createElement("tfoot");
-
-        thead.innerHTML = `
-          <tr>
-            <th>주문수</th>
-            <th>환불수</th>
-            <th>판매수</th>
-            <th>판매합계</th>
-          </tr>
-        `;
-
-        tbody.innerHTML = productRows.map(r => `
+        tbody.innerHTML = productRows.map(r => ` 
           <tr>
             <td class="numeric">${r.order_count.toLocaleString()}</td>
             <td class="numeric">${r.refund_count.toLocaleString()}</td>
@@ -242,6 +258,7 @@
         const totalQty = productRows.reduce((sum, r) => sum + r.sale_qty, 0);
         const totalAmount = productRows.reduce((sum, r) => sum + r.sale_amount, 0);
 
+        const tfoot = document.createElement("tfoot");
         tfoot.innerHTML = `
           <tr class="total-row">
             <td class="numeric">${totalOrder.toLocaleString()}</td>
@@ -251,7 +268,16 @@
           </tr>
         `;
 
-        table.appendChild(thead);
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>주문수</th>
+              <th>환불수</th>
+              <th>판매수</th>
+              <th>판매합계</th>
+            </tr>
+          </thead>
+        `;
         table.appendChild(tbody);
         table.appendChild(tfoot);
         div.appendChild(table);
