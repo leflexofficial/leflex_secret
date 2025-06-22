@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title id="pageTitle">채널 대시보드</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .dashboard-container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    table {
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 400px;
+    }
+
+    th, td {
+      border: 1px solid #aaa;
+      padding: 6px 10px;
+      text-align: center;
+      height: 20px;
+      line-height: 20px;
+      box-sizing: border-box;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    th.vat {
+      background: #fff4e0;
+      color: #d14300;
+      font-weight: bold;
+    }
+
+    td.numeric {
+      text-align: right;
+    }
+
+    .detail-table {
+      margin-bottom: 20px;
+    }
+
+    .product-title {
+      font-weight: bold;
+      margin: 4px 0 5px;
+    }
+
+    .detail-tables {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .detail-table {
+      min-width: 300px;
+      flex: 1 1 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="mainTitle">대시보드</h1>
+
+  <label for="monthSelect">월 선택:</label>
+  <select id="monthSelect"></select>
+
+  <div class="dashboard-container">
+    <div class="summary-table">
+      <table id="summaryTable">
+        <thead>
+          <tr>
+            <th colspan="4" style="background:#f8f8f8; border: 1px solid #aaa;">LEFLEX 할인판매 현황</th>
+            <th style="background:#fff4e0; color:#d14300; border: 1px solid #aaa;">VAT포함</th>
+          </tr>
+          <tr>
+            <th>날짜</th>
+            <th>주문수</th>
+            <th>환불수</th>
+            <th>판매수</th>
+            <th>판매합계</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="detail-tables" id="detailTables"></div>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script>
+    // ✅ 1. 유튜버 이름을 URL 파라미터에서 추출
+    const params = new URLSearchParams(window.location.search);
+    const youtuber = params.get("name") || "Unknown";
+
+    // ✅ 2. 제목 동적 반영
+    document.getElementById("pageTitle").textContent = `채널명: ${youtuber}`;
+    document.getElementById("mainTitle").textContent = `${youtuber} 대시보드`;
+
+    // ✅ 3. 기존 로직
+    const monthSelect = document.getElementById("monthSelect");
+    const summaryBody = document.querySelector("#summaryTable tbody");
+    const detailTablesContainer = document.getElementById("detailTables");
+
+    const months = [...new Set(salesData
+      .filter(r => r.youtuber === youtuber)
+      .map(r => r.month))].sort();
+
+    months.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = m;
+      monthSelect.appendChild(opt);
+    });
+
+    monthSelect.addEventListener("change", renderDashboard);
+
+    function renderDashboard() {
+      const selectedMonth = monthSelect.value;
+      const filtered = salesData.filter(r => r.youtuber === youtuber && r.month === selectedMonth);
+
+      renderSummaryTable(filtered);
+      renderDetailTables(filtered);
+    }
+
+    function renderSummaryTable(rows) {
+      summaryBody.innerHTML = "";
+
+      const grouped = rows.reduce((acc, row) => {
+        if (!acc[row.date]) {
+          acc[row.date] = { date: row.date, order: 0, refund: 0, qty: 0, amount: 0 };
+        }
+        acc[row.date].order += row.order_count;
+        acc[row.date].refund += row.refund_count;
+        acc[row.date].qty += row.sale_qty;
+        acc[row.date].amount += row.sale_amount;
+        return acc;
+      }, {});
+
+      Object.values(grouped).forEach(r => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.date}</td>
+          <td class="numeric">${r.order.toLocaleString()}</td>
+          <td class="numeric">${r.refund.toLocaleString()}</td>
+          <td class="numeric">${r.qty.toLocaleString()}</td>
+          <td class="numeric">${r.amount.toLocaleString()}</td>
+        `;
+        summaryBody.appendChild(tr);
+      });
+    }
+
+    function renderDetailTables(rows) {
+      detailTablesContainer.innerHTML = "";
+
+      const products = [...new Set(rows.map(r => r.product))];
+
+      products.forEach(product => {
+        const productRows = rows.filter(r => r.product === product);
+
+        const div = document.createElement("div");
+        div.className = "detail-table";
+
+        const title = document.createElement("div");
+        title.className = "product-title";
+
+        let price = "13,200원";
+        if (product.includes("손등장갑(오른손)")) {
+          price = "11,000원";
+        } else if (product.includes("손등장갑(양손)")) {
+          price = "19,800원";
+        }
+
+        title.innerText = `[판매 세부] ${product} / 판매가: ${price} (VAT 포함)`;
+        div.appendChild(title);
+
+        const table = document.createElement("table");
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th>주문수</th>
+              <th>환불수</th>
+              <th>판매수</th>
+              <th>판매합계</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${productRows.map(r => `
+              <tr>
+                <td class="numeric">${r.order_count.toLocaleString()}</td>
+                <td class="numeric">${r.refund_count.toLocaleString()}</td>
+                <td class="numeric">${r.sale_qty.toLocaleString()}</td>
+                <td class="numeric">${r.sale_amount.toLocaleString()}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        `;
+        div.appendChild(table);
+
+        detailTablesContainer.appendChild(div);
+      });
+    }
+
+    if (months.length > 0) {
+      monthSelect.value = months[0];
+      renderDashboard();
+    }
+  </script>
+</body>
+</html>
