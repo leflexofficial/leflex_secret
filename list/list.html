@@ -13,7 +13,7 @@
     .dashboard-header {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;  /* 왼쪽 정렬 */
+      align-items: flex-start;
       gap: 6px;
       margin-bottom: 20px;
     }
@@ -26,6 +26,7 @@
     h1 {
       margin: 0;
       font-size: 24px;
+      text-align: left;
     }
 
     label {
@@ -53,6 +54,8 @@
       display: flex;
       gap: 20px;
       align-items: flex-start;
+      overflow-x: auto;
+      white-space: nowrap;
     }
 
     table {
@@ -86,14 +89,13 @@
 
     .detail-tables {
       display: flex;
-      flex-wrap: wrap;
       gap: 20px;
       align-items: flex-start;
     }
 
     .detail-table {
       min-width: 300px;
-      flex: 1 1 300px;
+      flex: 0 0 auto;
     }
 
     .product-title {
@@ -206,9 +208,8 @@
         totalAmount += r.amount;
       });
 
-      // ✅ 합계 행을 tfoot에 넣기
       let tfoot = document.querySelector("#summaryTable tfoot");
-      if (tfoot) tfoot.remove(); // 중복 방지
+      if (tfoot) tfoot.remove();
       tfoot = document.createElement("tfoot");
 
       const totalRow = document.createElement("tr");
