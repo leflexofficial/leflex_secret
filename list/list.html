@@ -206,6 +206,11 @@
         totalAmount += r.amount;
       });
 
+      // ✅ 합계 행을 tfoot에 넣기
+      let tfoot = document.querySelector("#summaryTable tfoot");
+      if (tfoot) tfoot.remove(); // 중복 방지
+      tfoot = document.createElement("tfoot");
+
       const totalRow = document.createElement("tr");
       totalRow.classList.add("total-row");
       totalRow.innerHTML = `
@@ -215,7 +220,9 @@
         <td class="numeric">${totalQty.toLocaleString()}</td>
         <td class="numeric">${totalAmount.toLocaleString()}</td>
       `;
-      summaryBody.appendChild(totalRow);
+      tfoot.appendChild(totalRow);
+
+      document.getElementById("summaryTable").appendChild(tfoot);
     }
 
     function renderDetailTables(rows) {
