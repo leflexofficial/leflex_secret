@@ -141,6 +141,11 @@
         return acc;
       }, {});
 
+      let totalOrder = 0;
+      let totalRefund = 0;
+      let totalQty = 0;
+      let totalAmount = 0;
+
       Object.values(grouped).forEach(r => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -151,8 +156,26 @@
           <td class="numeric">${r.amount.toLocaleString()}</td>
         `;
         summaryBody.appendChild(tr);
+
+        // 합계 누적
+        totalOrder += r.order;
+        totalRefund += r.refund;
+        totalQty += r.qty;
+        totalAmount += r.amount;
       });
+
+      // ✅ 소계 행 추가
+      const totalRow = document.createElement("tr");
+      totalRow.innerHTML = `
+        <td><strong>합계</strong></td>
+        <td class="numeric"><strong>${totalOrder.toLocaleString()}</strong></td>
+        <td class="numeric"><strong>${totalRefund.toLocaleString()}</strong></td>
+        <td class="numeric"><strong>${totalQty.toLocaleString()}</strong></td>
+        <td class="numeric"><strong>${totalAmount.toLocaleString()}</strong></td>
+      `;
+      summaryBody.appendChild(totalRow);
     }
+
 
     function renderDetailTables(rows) {
       detailTablesContainer.innerHTML = "";
