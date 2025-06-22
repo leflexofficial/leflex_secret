@@ -163,6 +163,15 @@
 
         const title = document.createElement("div");
         title.className = "product-title";
+
+        let price = "13,200원";  // 기본값
+
+        if (product.includes("손등장갑(오른손)")) {
+          price = "11,000원";
+        } else if (product.includes("손등장갑(양손)")) {
+          price = "19,800원";
+        }
+
         title.innerText = `[판매 세부] ${product} / 판매가: 13,200원 (VAT 포함)`;
         div.appendChild(title);
 
