@@ -5,10 +5,23 @@
   <title id="pageTitle">채널 대시보드</title>
   <link rel="stylesheet" href="../css/style.css">
   <style>
+    body {
+      margin: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
     .dashboard-container {
       display: flex;
       gap: 20px;
       align-items: flex-start;
+      flex-wrap: wrap;
     }
 
     table {
@@ -42,6 +55,8 @@
 
     .detail-table {
       margin-bottom: 20px;
+      min-width: 300px;
+      flex: 1 1 300px;
     }
 
     .product-title {
@@ -56,12 +71,6 @@
       align-items: flex-start;
     }
 
-    .detail-table {
-      min-width: 300px;
-      flex: 1 1 300px;
-    }
-
-    /* ✅ 소계/합계 행 통일 스타일 */
     tr.total-row {
       background-color: #fff4e0;
       font-weight: bold;
@@ -73,10 +82,12 @@
   </style>
 </head>
 <body>
-  <h1 id="mainTitle">대시보드</h1>
-
-  <label for="monthSelect">월 선택:</label>
-  <select id="monthSelect"></select>
+  <div class="header">
+    <h1 id="mainTitle">대시보드</h1>
+    <label for="monthSelect">월 선택:
+      <select id="monthSelect"></select>
+    </label>
+  </div>
 
   <div class="dashboard-container">
     <div class="summary-table">
@@ -166,11 +177,6 @@
         totalAmount += r.amount;
       });
 
-      // ✅ 합계 행을 tfoot에 넣기
-      let tfoot = document.querySelector("#summaryTable tfoot");
-      if (tfoot) tfoot.remove(); // 중복 방지
-      tfoot = document.createElement("tfoot");
-
       const totalRow = document.createElement("tr");
       totalRow.classList.add("total-row");
       totalRow.innerHTML = `
@@ -180,9 +186,7 @@
         <td class="numeric">${totalQty.toLocaleString()}</td>
         <td class="numeric">${totalAmount.toLocaleString()}</td>
       `;
-      tfoot.appendChild(totalRow);
-
-      document.getElementById("summaryTable").appendChild(tfoot);
+      summaryBody.appendChild(totalRow);
     }
 
     function renderDetailTables(rows) {
@@ -211,7 +215,19 @@
         div.appendChild(title);
 
         const table = document.createElement("table");
+        const thead = document.createElement("thead");
         const tbody = document.createElement("tbody");
+        const tfoot = document.createElement("tfoot");
+
+        thead.innerHTML = `
+          <tr>
+            <th>주문수</th>
+            <th>환불수</th>
+            <th>판매수</th>
+            <th>판매합계</th>
+          </tr>
+        `;
+
         tbody.innerHTML = productRows.map(r => `
           <tr>
             <td class="numeric">${r.order_count.toLocaleString()}</td>
@@ -226,7 +242,6 @@
         const totalQty = productRows.reduce((sum, r) => sum + r.sale_qty, 0);
         const totalAmount = productRows.reduce((sum, r) => sum + r.sale_amount, 0);
 
-        const tfoot = document.createElement("tfoot");
         tfoot.innerHTML = `
           <tr class="total-row">
             <td class="numeric">${totalOrder.toLocaleString()}</td>
@@ -236,16 +251,7 @@
           </tr>
         `;
 
-        table.innerHTML = `
-          <thead>
-            <tr>
-              <th>주문수</th>
-              <th>환불수</th>
-              <th>판매수</th>
-              <th>판매합계</th>
-            </tr>
-          </thead>
-        `;
+        table.appendChild(thead);
         table.appendChild(tbody);
         table.appendChild(tfoot);
         div.appendChild(table);
