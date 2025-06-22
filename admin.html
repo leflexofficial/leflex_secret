@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 대시보드</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h2>전체 유튜버 실적 보기</h2>
+
+  <select id="month">
+    <option value="2025-06">2025년 6월</option>
+  </select>
+
+  <div id="table"></div>
+
+  <script src="js/data.js"></script>
+  <script>
+    const monthSelector = document.getElementById("month");
+    const tableDiv = document.getElementById("table");
+
+    function render(month) {
+      const list = salesData.filter(r => r.month === month);
+
+      const grouped = list.reduce((acc, row) => {
+        if (!acc[row.youtuber]) acc[row.youtuber] = { qty: 0, amount: 0 };
+        acc[row.youtuber].qty += row.qty;
+        acc[row.youtuber].amount += row.amount;
+        return acc;
+      }, {});
+
+      const html = Object.entries(grouped).map(([name, v]) => `
+        <div>${name} - 총 ${v.qty}개 - ${v.amount.toLocaleString()}원</div>
+      `).join('');
+
+      tableDiv.innerHTML = html;
+    }
+
+    monthSelector.addEventListener("change", e => render(e.target.value));
+    render(monthSelector.value);
+  </script>
+</body>
+</html>

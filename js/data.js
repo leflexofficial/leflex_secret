@@ -1,0 +1,22 @@
+const salesData = [
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-01", month: "2025-06", order_count: 267, refund_count: 16, sale_qty: 251, sale_amount: 3313200 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-02", month: "2025-06", order_count: 151, refund_count: 8, sale_qty: 143, sale_amount: 1887600 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-03", month: "2025-06", order_count: 124, refund_count: 6, sale_qty: 118, sale_amount: 1557600 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-04", month: "2025-06", order_count: 149, refund_count: 25, sale_qty: 124, sale_amount: 1636800 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-05", month: "2025-06", order_count: 80, refund_count: 1, sale_qty: 79, sale_amount: 1042800 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-06", month: "2025-06", order_count: 70, refund_count: 7, sale_qty: 63, sale_amount: 831600 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-07", month: "2025-06", order_count: 74, refund_count: 1, sale_qty: 73, sale_amount: 963600 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-08", month: "2025-06", order_count: 166, refund_count: 2, sale_qty: 164, sale_amount: 2164800 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-09", month: "2025-06", order_count: 204, refund_count: 3, sale_qty: 201, sale_amount: 2653200 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-10", month: "2025-06", order_count: 107, refund_count: 1, sale_qty: 106, sale_amount: 1399200 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-11", month: "2025-06", order_count: 124, refund_count: 3, sale_qty: 121, sale_amount: 1597200 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-12", month: "2025-06", order_count: 129, refund_count: 3, sale_qty: 126, sale_amount: 1663200 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-13", month: "2025-06", order_count: 64, refund_count: 3, sale_qty: 61, sale_amount: 805200 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-14", month: "2025-06", order_count: 64, refund_count: 3, sale_qty: 61, sale_amount: 805200 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-15", month: "2025-06", order_count: 62, refund_count: 0, sale_qty: 62, sale_amount: 818400 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-16", month: "2025-06", order_count: 35, refund_count: 0, sale_qty: 35, sale_amount: 462000 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-17", month: "2025-06", order_count: 61, refund_count: 2, sale_qty: 59, sale_amount: 778800 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-18", month: "2025-06", order_count: 24, refund_count: 0, sale_qty: 24, sale_amount: 316800 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-19", month: "2025-06", order_count: 24, refund_count: 0, sale_qty: 24, sale_amount: 316800 },
+  { youtuber: "탈골스윙", product: "마스크", date: "2025-06-20", month: "2025-06", order_count: 35, refund_count: 0, sale_qty: 35, sale_amount: 462000 }
+];

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>탈골스윙 대시보드</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <h2>탈골스윙 공동구매 실적</h2>
+
+  <div style="margin-bottom: 20px;">
+    <label for="month">월 선택: </label>
+    <select id="month">
+      <option value="2025-06">2025년 6월</option>
+    </select>
+  </div>
+
+  <div id="result"></div>
+
+  <script src="../js/data.js"></script>
+  <script>
+    const allData = salesData.filter(row => row.youtuber === "탈골스윙");
+
+    function renderTable(data) {
+      const resultDiv = document.getElementById("result");
+
+      if (data.length === 0) {
+        resultDiv.innerHTML = "<p>데이터가 없습니다.</p>";
+        return;
+      }
+
+      // 총합 계산
+      const total = {
+        order_count: 0,
+        refund_count: 0,
+        sale_qty: 0,
+        sale_amount: 0
+      };
+
+      data.forEach(r => {
+        total.order_count += r.order_count;
+        total.refund_count += r.refund_count;
+        total.sale_qty += r.sale_qty;
+        total.sale_amount += r.sale_amount;
+      });
+
+      const header = `
+        <table>
+          <thead>
+            <tr>
+              <th>날짜</th>
+              <th>주문수</th>
+              <th>환불수</th>
+              <th>판매수</th>
+              <th>판매금액</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      const rows = data.map(r => `
+        <tr>
+          <td>${r.date}</td>
+          <td class="numeric">${r.order_count}</td>
+          <td class="numeric">${r.refund_count}</td>
+          <td class="numeric">${r.sale_qty}</td>
+          <td class="numeric">${r.sale_amount.toLocaleString()}</td>
+        </tr>
+      `).join('');
+
+      const footer = `
+        <tr style="font-weight: bold; background-color: #f9f9f9;">
+          <td>총합</td>
+          <td class="numeric">${total.order_count}</td>
+          <td class="numeric">${total.refund_count}</td>
+          <td class="numeric">${total.sale_qty}</td>
+          <td class="numeric">${total.sale_amount.toLocaleString()}</td>
+        </tr>
+        </tbody>
+        </table>
+      `;
+
+      resultDiv.innerHTML = header + rows + footer;
+    }
+
+    const monthSelector = document.getElementById("month");
+    monthSelector.addEventListener("change", () => {
+      const selectedMonth = monthSelector.value;
+      const filtered = allData.filter(r => r.month === selectedMonth);
+      renderTable(filtered);
+    });
+
+    // 초기 렌더링
+    renderTable(allData.filter(r => r.month === monthSelector.value));
+  </script>
+</body>
+</html>
