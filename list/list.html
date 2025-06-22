@@ -60,6 +60,12 @@
       min-width: 300px;
       flex: 1 1 300px;
     }
+
+    /* ✅ 소계 행 스타일 */
+    tr.total-row {
+      background-color: #fff4e0;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -74,7 +80,7 @@
         <thead>
           <tr>
             <th colspan="4" style="background:#f8f8f8; border: 1px solid #aaa;">LEFLEX 할인판매 현황</th>
-            <th style="background:#fff4e0; color:#d14300; border: 1px solid #aaa;">VAT포함</th>
+            <th class="vat">VAT포함</th>
           </tr>
           <tr>
             <th>날짜</th>
@@ -93,15 +99,12 @@
 
   <script src="../js/data.js"></script>
   <script>
-    // ✅ 1. 유튜버 이름을 URL 파라미터에서 추출
     const params = new URLSearchParams(window.location.search);
     const youtuber = params.get("name") || "Unknown";
 
-    // ✅ 2. 제목 동적 반영
     document.getElementById("pageTitle").textContent = `채널명: ${youtuber}`;
     document.getElementById("mainTitle").textContent = `채널명: ${youtuber}`;
 
-    // ✅ 3. 기존 로직
     const monthSelect = document.getElementById("monthSelect");
     const summaryBody = document.querySelector("#summaryTable tbody");
     const detailTablesContainer = document.getElementById("detailTables");
@@ -141,10 +144,7 @@
         return acc;
       }, {});
 
-      let totalOrder = 0;
-      let totalRefund = 0;
-      let totalQty = 0;
-      let totalAmount = 0;
+      let totalOrder = 0, totalRefund = 0, totalQty = 0, totalAmount = 0;
 
       Object.values(grouped).forEach(r => {
         const tr = document.createElement("tr");
@@ -156,26 +156,23 @@
           <td class="numeric">${r.amount.toLocaleString()}</td>
         `;
         summaryBody.appendChild(tr);
-
-        // 합계 누적
         totalOrder += r.order;
         totalRefund += r.refund;
         totalQty += r.qty;
         totalAmount += r.amount;
       });
 
-      // ✅ 소계 행 추가
       const totalRow = document.createElement("tr");
+      totalRow.classList.add("total-row");
       totalRow.innerHTML = `
-        <td><strong>합계</strong></td>
-        <td class="numeric"><strong>${totalOrder.toLocaleString()}</strong></td>
-        <td class="numeric"><strong>${totalRefund.toLocaleString()}</strong></td>
-        <td class="numeric"><strong>${totalQty.toLocaleString()}</strong></td>
-        <td class="numeric"><strong>${totalAmount.toLocaleString()}</strong></td>
+        <td>합계</td>
+        <td class="numeric">${totalOrder.toLocaleString()}</td>
+        <td class="numeric">${totalRefund.toLocaleString()}</td>
+        <td class="numeric">${totalQty.toLocaleString()}</td>
+        <td class="numeric">${totalAmount.toLocaleString()}</td>
       `;
       summaryBody.appendChild(totalRow);
     }
-
 
     function renderDetailTables(rows) {
       detailTablesContainer.innerHTML = "";
@@ -203,8 +200,6 @@
         div.appendChild(title);
 
         const table = document.createElement("table");
-
-        // ✅ 본문 행
         const tbody = document.createElement("tbody");
         tbody.innerHTML = productRows.map(r => `
           <tr>
@@ -215,20 +210,18 @@
           </tr>
         `).join("");
 
-        // ✅ 소계 계산
         const totalOrder = productRows.reduce((sum, r) => sum + r.order_count, 0);
         const totalRefund = productRows.reduce((sum, r) => sum + r.refund_count, 0);
         const totalQty = productRows.reduce((sum, r) => sum + r.sale_qty, 0);
         const totalAmount = productRows.reduce((sum, r) => sum + r.sale_amount, 0);
 
-        // ✅ 소계 행 추가
         const tfoot = document.createElement("tfoot");
         tfoot.innerHTML = `
-          <tr>
-            <td class="numeric"><strong>${totalOrder.toLocaleString()}</strong></td>
-            <td class="numeric"><strong>${totalRefund.toLocaleString()}</strong></td>
-            <td class="numeric"><strong>${totalQty.toLocaleString()}</strong></td>
-            <td class="numeric"><strong>${totalAmount.toLocaleString()}</strong></td>
+          <tr class="total-row">
+            <td class="numeric">${totalOrder.toLocaleString()}</td>
+            <td class="numeric">${totalRefund.toLocaleString()}</td>
+            <td class="numeric">${totalQty.toLocaleString()}</td>
+            <td class="numeric">${totalAmount.toLocaleString()}</td>
           </tr>
         `;
 
@@ -244,7 +237,6 @@
         `;
         table.appendChild(tbody);
         table.appendChild(tfoot);
-
         div.appendChild(table);
         detailTablesContainer.appendChild(div);
       });
